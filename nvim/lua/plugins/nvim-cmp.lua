@@ -39,6 +39,7 @@ return {
       }),
       -- sources for autocompletion
       sources = cmp.config.sources({
+        { name = "copilot" },
         { name = "nvim_lsp" },
         { name = "luasnip" }, -- snippets
         { name = "buffer" },  -- text within current buffer
@@ -46,10 +47,22 @@ return {
       }),
       -- configure lspkind for vs-code like pictograms in completion menu
       formatting = {
-        format = lspkind.cmp_format({
-          maxwidth = 50,
-          ellipsis_char = "...",
-        }),
+        -- format = lspkind.cmp_format({
+        --   maxwidth = 50,
+        --   ellipsis_char = "...",
+        -- }),
+        format = function(entry, item)
+          -- Apply lspkind formatting first
+          item = lspkind.cmp_format({
+            maxwidth = 50,
+            ellipsis_char = "...",
+          })(entry, item)
+
+          -- Apply tailwindcss-colorizer-cmp formatting
+          item = require("tailwindcss-colorizer-cmp").formatter(entry, item)
+
+          return item
+        end,
       },
     })
     -- `:` cmdline setup.
